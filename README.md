@@ -11,8 +11,8 @@ This repository can be used as a template for starting new
 farmOS contrib modules. It provides the following:
 - Standardized README.md template (see comments and remove what you don't need!)
 - Example module structure.
-- TODO: Github action for phpcs.
-- TODO: Github action for phpunit.
+- Github action for automated tests:
+  - PHPCS and PHPUnit
 
 <!---
 Geting started.
