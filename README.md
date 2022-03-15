@@ -7,10 +7,10 @@ Template for farmOS contrib modules.
 This module is an add-on for the [farmOS](http://drupal.org/project/farm)
 distribution.
 
-This repository can be used as a template for starting new 
+This repository can be used as a template for starting new
 farmOS contrib modules. It provides the following:
 - Standardized README.md template (see comments and remove what you don't need!)
-- TODO: Example module structure.
+- Example module structure.
 - TODO: Github action for phpcs.
 - TODO: Github action for phpunit.
 
