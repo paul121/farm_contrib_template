@@ -1,0 +1,42 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" # Cron time is set in the UI.
+    - if: $CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_REF_NAME =~/^1.x$|^1.x-.*/ # any branch begins with "1.x" or "1.x-*".
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == '1.x'
+
+# List of stages for jobs, and their order of execution
+stages:
+  - build
+
+  # This job runs in the build stage, which runs first.
+build-job:
+  image: docker:latest
+
+  services:
+    - docker:dind
+
+  stage: build
+
+   # Checkout the repository.
+  variables:
+    GIT_CHECKOUT: "true"
+
+    COMPOSE_FILE: docker-compose.testing.yml
+
+    # Edit this to match your module name.
+    MODULE_NAME: farm_cft
+
+  before_script:
+    - apk --no-cache add docker-compose   # install docker-compose
+    - docker version
+    - docker-compose version
+    - docker-compose up -d
+
+  script:
+    - |
+      docker-compose exec -u www-data -T www composer config --merge --json extra.merge-plugin.include '["web/modules/custom/*/*.json"]'
+      docker-compose exec -u www-data -T www composer update
+    - docker-compose exec -u www-data -T www phpcs /opt/drupal/web/modules/custom --exclude=DrupalPractice.InfoFiles.NamespacedDependency
+    - docker-compose exec -u www-data -T www phpunit /opt/drupal/web/modules/custom
+    - docker-compose exec -u www-data -T www bash -c "drush site-install --db-url=pgsql://farm:farm@db/farm farm farm.modules='base'"
+    - docker-compose exec -u www-data -T www bash -c "drush en $MODULE_NAME -y"
