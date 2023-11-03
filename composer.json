@@ -9,6 +9,6 @@
       }
   ],
   "require": {
-    "farmos/farmos": "^2.0"
+    "farmos/farmos": "^3.0"
   }
 }
